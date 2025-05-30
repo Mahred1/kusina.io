@@ -1,7 +1,6 @@
 import { memo, useState } from "react";
 import { useRecipe } from "../contexts/RecipesContext";
 import { useNavigate } from "react-router-dom";
-import Confirmation from "./Confirmation";
 
 const AdminRecipe = memo(function AdminRecipe({
   recipe,

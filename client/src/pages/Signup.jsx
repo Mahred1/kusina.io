@@ -1,14 +1,22 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import Error from "../components/Error";
 
 function Signup() {
+
+    const location = useLocation();
+
+  useEffect(() => {
+    setError("");
+  }, [location]);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [full_name, setFullname] = useState("");
   const [role, setRole] = useState("user");
+
 
   const { signup, authLoading,error,setError } = useAuth();
   const navigate = useNavigate();

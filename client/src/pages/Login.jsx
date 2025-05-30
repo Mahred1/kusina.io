@@ -1,9 +1,15 @@
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Error from "../components/Error";
 
 function Login() {
+  const location = useLocation();
+
+  useEffect(() => {
+    setError("");
+  }, [location]);
+  
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const { login, authLoading, error, setError } = useAuth();
