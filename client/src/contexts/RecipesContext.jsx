@@ -5,7 +5,6 @@ import { useAuth } from "./AuthContext";
 const recipesProvider = createContext();
 
 function reducer(state, action) {
-  
   switch (action.type) {
     case "recipes":
       return { ...state, recipes: action.payload, isLoading: false };
@@ -30,8 +29,7 @@ function reducer(state, action) {
   }
 }
 function RecipesContext({ children }) {
-  const {user} =useAuth();
-
+  const { user } = useAuth();
 
   const [{ recipes, favourite, isLoading, search }, dispatch] = useReducer(
     reducer,
@@ -42,39 +40,52 @@ function RecipesContext({ children }) {
       search: "",
     }
   );
-  useEffect(function () {
-    async function getData() {
-      dispatch({ type: "loading" });
-      
-      if(user){
-        const res = await fetch("http://127.0.0.1:8000/recipebook/recipes/", {
-        method: "GET",
-        headers: {
-          Authorization: `JWT ${localStorage.getItem("user")}`,
-        },
-      });
-      const data = await res.json();
-      dispatch({ type: "recipes", payload: data });
-      }
-    }
-    getData();
-  }, [user]);
+  useEffect(
+    function () {
+      async function getData() {
+        dispatch({ type: "loading" });
 
-  useEffect(function () {
-    async function getFav() {
-     if(user){
-       const res = await fetch("http://localhost:4000/favourite");
-      const favourite = await res.json();
-      dispatch({ type: "favourite", payload: favourite });
-     }
-    }
-    getFav();
-  }, [user]);
+        if (user) {
+          const res = await fetch("http://127.0.0.1:8000/recipebook/recipes/", {
+            method: "GET",
+            headers: {
+              Authorization: `JWT ${localStorage.getItem("user")}`,
+            },
+          });
+          const data = await res.json();
+          dispatch({ type: "recipes", payload: data });
+        }
+      }
+      getData();
+    },
+    [user]
+  );
+
+  useEffect(
+    function () {
+      async function getFav() {
+        if (user) {
+          const res = await fetch(
+            "http://127.0.0.1:8000/recipebook/favorites/",
+            {
+              method: "GET",
+              headers: {
+                Authorization: `JWT ${localStorage.getItem("user")}`,
+              },
+            }
+          );
+          const favourite = await res.json();
+          dispatch({ type: "favourite", payload: favourite });
+        }
+      }
+      getFav();
+    },
+    [user]
+  );
   function updateRecipes(data) {
     dispatch({ type: "recipes", payload: data });
   }
   async function addRecipe(data) {
-    
     const res = await fetch("http://127.0.0.1:8000/recipebook/admin/recipes/", {
       method: "POST",
       headers: {
@@ -90,13 +101,20 @@ function RecipesContext({ children }) {
     }
   }
 
-  const userFavouriteList = favourite.map((fav) => fav.id);
-  const userFavourite = recipes.filter((recipe) =>
-    userFavouriteList.includes(recipe.id)
-  );
-  const searchResult = recipes.filter((recipe) =>
-    recipe.name.toLowerCase().includes(search)
-  );
+
+
+
+    const userFavouriteList = favourite.map((fav) => fav.id);
+    const userFavourite = recipes.filter((recipe) =>
+      userFavouriteList.includes(recipe.id)
+    );
+    const searchResult = recipes.filter((recipe) =>
+      recipe.name.toLowerCase().includes(search)
+    );
+  
+ 
+
+
   function updateFav(data) {
     dispatch({ type: "favourite", payload: data });
   }

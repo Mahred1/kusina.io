@@ -90,7 +90,7 @@ function Admin() {
       {edit && <EditRecipe onSetEdit={setEdit} currentRecipe={currentRecipe} />}
       {add && <AddRecipe onsetAdd={setAdd} currentRecipe={currentRecipe} />}
       <div className="flex mt-2  mb-3 mr-2">
-        {!isLoading && search === "" && recipes.length > 0 && (
+        {!isLoading && search === "" && recipes.length >= 0 && (
           <button
             onClick={() => setAdd(!add)}
             className=" ml-auto  drop-shadow-md text-center transition ease-in font-light text-lg  text-white bg-primary border-1 border-primary px-5 py-1 rounded-[100px] hover:bg-white cursor-pointer hover:text-primary w-fit "

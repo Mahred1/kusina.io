@@ -7,25 +7,41 @@ function AuthContext({ children }) {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(true);
   const [adminNav, setAdminNav] = useState(false);
-  const [error,setError]= useState("")
+  const [error, setError] = useState("");
   //   get user
-  useEffect(function () {
-    async function getUser() {
-      const token = localStorage.getItem("user");
-      if (token) {
-        const user = jwtDecode(token);
-        console.log(user);
-        setUser(user);
-        if (user.role === "admin") {
-          setAdminNav(true);
-        } else {
-          setAdminNav(false);
+  useEffect(
+    function () {
+      async function getUser() {
+        const token = localStorage.getItem("user");
+        const res = await fetch("http://127.0.0.1:8000/recipebook/favorites/", {
+          method: "GET",
+          headers: {
+            Authorization: `JWT ${token}`,
+          },
+        });
+
+        if (!res.ok) {
+          setUser(null);
+          setAuthLoading(false);
+
+          return;
         }
+        if (token) {
+          const user = jwtDecode(token);
+          console.log(user);
+          setUser(user);
+          if (user.role === "admin") {
+            setAdminNav(true);
+          } else {
+            setAdminNav(false);
+          }
+        }
+        setAuthLoading(false);
       }
-      setAuthLoading(false);
-    }
-    getUser();
-  }, []);
+      getUser();
+    },
+    []
+  );
 
   console.log(adminNav);
 
@@ -51,12 +67,12 @@ function AuthContext({ children }) {
     });
 
     if (!res.ok) {
-      const data =await res.json()
-      console.log(data)
-      if(data.detail){
-        setError(data.detail)
+      const data = await res.json();
+      console.log(data);
+      if (data.detail) {
+        setError(data.detail);
       }
-      console.log(error)
+      console.log(error);
       // setError(await res.json());
       setAuthLoading(false);
       return false;
@@ -90,9 +106,9 @@ function AuthContext({ children }) {
     });
     console.log(email);
     if (!res.ok) {
-      const data= await res.json()
-      if(data.username){
-        setError(data.username[0])
+      const data = await res.json();
+      if (data.username) {
+        setError(data.username[0]);
       }
       // console.log(await res.json());
       setAuthLoading(false);
@@ -105,7 +121,16 @@ function AuthContext({ children }) {
 
   return (
     <authProvider.Provider
-      value={{ user, authLoading, logout, login, signup, adminNav,error,setError }}
+      value={{
+        user,
+        authLoading,
+        logout,
+        login,
+        signup,
+        adminNav,
+        error,
+        setError,
+      }}
     >
       {children}
     </authProvider.Provider>

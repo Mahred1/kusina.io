@@ -3,6 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 
 function ProtectedRoute({ children }) {
   const { user, authLoading } = useAuth();
+  
   return (
     <div>
       {!user && !authLoading ? (

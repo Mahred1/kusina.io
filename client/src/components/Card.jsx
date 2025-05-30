@@ -1,19 +1,46 @@
 import { memo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, UNSAFE_FetchersContext } from "react-router-dom";
 import { useRecipe } from "../contexts/RecipesContext";
 
 const Card = memo(function Card({ recipe }) {
-  const { userFavouriteList,favourite,updateFav } = useRecipe();
+  const { userFavouriteList, favourite, updateFav } = useRecipe();
   const [isOver, setIsOver] = useState(false);
 
-  function handleUpdateFav(){
-   if(userFavouriteList.includes(recipe.id)){
-    const newFav= favourite.filter(fav=> fav.id !== recipe.id)
-    updateFav(newFav)
-   }else{
-    const newFav= [...favourite,recipe]
-    updateFav(newFav)
-   }
+  async function handleUpdateFav() {
+    if (userFavouriteList.includes(recipe.id)) {
+      const newFav = favourite.filter((fav) => fav.id !== recipe.id);
+
+      const res = await fetch(
+        `http://127.0.0.1:8000/recipebook/favorites/${recipe.id}/`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `JWT ${localStorage.getItem("user")}`,
+          },
+        }
+      );
+      if (!res.ok) {
+        console.log(await res.json());
+      } else {
+        updateFav(newFav);
+      }
+    } else {
+      const newFav = [...favourite, recipe];
+      const res = await fetch("http://127.0.0.1:8000/recipebook/favorites/", {
+        method: "POST",
+        headers: {
+          Authorization: `JWT ${localStorage.getItem("user")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: recipe.id }),
+      });
+
+      if (!res.ok) {
+        console.log(await res.json());
+      } else {
+        updateFav(newFav);
+      }
+    }
   }
   //301*187
   return (
@@ -37,7 +64,8 @@ const Card = memo(function Card({ recipe }) {
           </span>
         </p>
         <div className="flex justify-between w-[90%] m-auto items-center pb-4 px-1 py-2">
-          <div onClick={handleUpdateFav}
+          <div
+            onClick={handleUpdateFav}
             onMouseEnter={() => setIsOver(true)}
             onMouseLeave={() => setIsOver(false)}
           >
