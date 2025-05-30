@@ -53,8 +53,8 @@ function Admin() {
         <section>
           {search === "" ? (
             recipes.length === 0 ? (
-              <div className="min-w-screen font-bold text-4xl text-center mt-15 text-[#ededed]">
-                There are no Recipes yet!!
+              <div className="min-w-screen font-bold text-4xl text-center mt-15 text-[#d2d2d2]">
+                There are no Recipes yet !!
               </div>
             ) : (
               recipes.map((recipe) => {
